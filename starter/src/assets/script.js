@@ -1,4 +1,5 @@
 let totalPaid = 0; //
+let currencyFormatter = Intl.NumberFormat('en-us', { style: 'currency', currency: 'USD' });
 /* Create an array named products which you will use to add all of
 your product object literals that you create in the next step. */
 const products = [];
@@ -21,7 +22,7 @@ const cherry = {
 
 const orange = {
   name: 'Bag of Orange',
-  price: 10,
+  price: 1000,
   quantity: 0,
   productId: 102,
   image: 'images/orange.jpg',
@@ -123,12 +124,34 @@ function emptyCart() {
   - pay will return a positive number if money should be returned to customer
 */
 function pay(amount) {
-  totalPaid += amount;
-  return totalPaid - cartTotal(); // subtract the cart's total from the ammount paied
+  const remainder = totalPaid + amount - cartTotal();
+  if (remainder >= 0) {
+    totalPaid = 0;
+  } else {
+    totalPaid += amount;
+  }
+
+  return remainder; // subtract the cart's total from the ammount paied
 }
 
 /* Place stand out suggestions here (stand out suggestions can be found at the bottom
 of the project rubric.) */
+function currency(currencyType) {
+  switch (currencyType) {
+    case 'YEN':
+      currencyFormatter = Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' });
+      break;
+    case 'EUR':
+      currencyFormatter = Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+      break;
+    default:
+      currencyFormatter = Intl.NumberFormat('en-us', { style: 'currency', currency: 'USD' });
+  }
+}
+
+function formatCurrency(amount) {
+  return currencyFormatter.format(amount);
+}
 
 /* The following is for running unit tests.
    To fully complete this project, it is expected that all tests pass.
@@ -146,6 +169,6 @@ module.exports = {
   cartTotal,
   pay,
   emptyCart,
-  /* Uncomment the following line if completing the currency converter bonus */
-  //currency,
+  currency,
+  formatCurrency,
 };

@@ -9,7 +9,7 @@ function drawProducts() {
             <div data-productId='${element.productId}'>
                 <img src='${element.image}'>
                 <h3>${element.name}</h3>
-                <p>price: ${currencySymbol}${element.price}</p>
+                <p>price: ${formatCurrency(element.price)}</p>
                 <button class="add-to-cart">Add to Cart</button>
             </div>
         `;
@@ -29,9 +29,9 @@ function drawCart() {
         cartItems += `
             <div data-productId='${element.productId}'>
                 <h3>${element.name}</h3>
-                <p>price: ${currencySymbol}${element.price}</p>
+                <p>price: ${formatCurrency(element.price)}</p>
                 <p>quantity: ${element.quantity}</p>
-                <p>total: ${currencySymbol}${itemTotal}</p>
+                <p>total: ${formatCurrency(itemTotal)}</p>
                 <button class="qup">+</button>
                 <button class="qdown">-</button>
                 <button class="remove">remove</button>
@@ -53,7 +53,7 @@ function drawCheckout() {
     let cartSum = cartTotal();
 
     let div = document.createElement('div');
-    div.innerHTML = `<p>Cart Total: ${currencySymbol}${cartSum}`;
+    div.innerHTML = `<p>Cart Total: ${formatCurrency(cartSum)}`;
     checkout.append(div);
 }
 
@@ -119,15 +119,15 @@ document.querySelector('.pay').addEventListener('click', (e) => {
     // Else request additional funds
     if (cashReturn >= 0) {
         div.innerHTML = `
-            <p>Cash Received: ${currencySymbol}${amount}</p>
-            <p>Cash Returned: ${currencySymbol}${cashReturn}</p>
+            <p>Cash Received: ${formatCurrency(amount)}</p>
+            <p>Cash Returned: ${formatCurrency(cashReturn)}</p>
             <p>Thank you!</p>
         `;
     } else {
         // reset cash field for next entry
         document.querySelector('.received').value = '';
         div.innerHTML = `
-            <p>Cash Received: ${currencySymbol}${amount}</p>
+            <p>Cash Received: ${formatCurrency(amount)}</p>
             <p>Remaining Balance: ${cashReturn}$</p>
             <p>Please pay additional amount.</p>
             <hr/>
@@ -154,38 +154,38 @@ document.querySelector('.empty-btn').addEventListener('click', (e) => {
         drawCart();
         drawCheckout();
     }
-})
+});
 /* End all items from cart */
 
 /* Begin currency converter */
-// function currencyBuilder(){
-//     let currencyPicker = document.querySelector('.currency-selector');
-//     let select = document.createElement("select");
-//     select.classList.add("currency-select");
-//     select.innerHTML = `<option value="USD">USD</option>
-//                         <option value="EUR">EUR</option>
-//                         <option value="YEN">YEN</option>`;
-//     currencyPicker.append(select);
-// }
-// currencyBuilder();
+function currencyBuilder(){
+    let currencyPicker = document.querySelector('.currency-selector');
+    let select = document.createElement("select");
+    select.classList.add("currency-select");
+    select.innerHTML = `<option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="YEN">YEN</option>`;
+    currencyPicker.append(select);
+}
+currencyBuilder();
 
-// document.querySelector('.currency-select').addEventListener('change', function handleChange(event) {
-//     switch(event.target.value){
-//         case 'EUR':
-//             currencySymbol = '€';
-//             break;
-//         case 'YEN':
-//             currencySymbol = '¥';
-//             break;
-//         default:
-//             currencySymbol = '$';
-//             break;
-//      }
+document.querySelector('.currency-select').addEventListener('change', function handleChange(event) {
+    switch(event.target.value){
+        case 'EUR':
+            currencySymbol = '€';
+            break;
+        case 'YEN':
+            currencySymbol = '¥';
+            break;
+        default:
+            currencySymbol = '$';
+            break;
+     }
 
-//     currency(event.target.value);
-//     drawProducts();
-//     drawCart();
-//     drawCheckout();
-// });
+    currency(event.target.value);
+    drawProducts();
+    drawCart();
+    drawCheckout();
+});
 /* End currency converter */
 /* End standout suggestions */
