@@ -128,7 +128,7 @@ document.querySelector('.pay').addEventListener('click', (e) => {
         document.querySelector('.received').value = '';
         div.innerHTML = `
             <p>Cash Received: ${formatCurrency(amount)}</p>
-            <p>Remaining Balance: ${cashReturn}$</p>
+            <p>Remaining Balance: ${formatCurrency(cashReturn)}</p>
             <p>Please pay additional amount.</p>
             <hr/>
         `;
@@ -189,3 +189,214 @@ document.querySelector('.currency-select').addEventListener('change', function h
 });
 /* End currency converter */
 /* End standout suggestions */
+
+
+/**
+ * Extra Credit
+ */
+function drawCrediCardForm() {
+    const checkout = document.querySelector('.checkout-container');
+    const creditCardDiv = document.createElement('form');
+    creditCardDiv.setAttribute('novalidate', '');
+    creditCardDiv.style.cssText = 'max-width: 250px; display: flex; flex-flow: row wrap; gap: 0.5rem; padding: 1rem; background: #DDD; border-radius: 0.5rem; box-shadow: 3px 3px 4px 1px';
+    
+    const cardNumber = document.createElement('input');
+    cardNumber.setAttribute('type', 'text');
+    cardNumber.setAttribute('placeholder', 'Card Number');
+    cardNumber.setAttribute('required', '');
+    cardNumber.setAttribute('pattern', '^(\d{4}-){3}\d{4}$'); //eslint-disable-line
+    cardNumber.style.cssText = 'width: 100%; padding: 0.25rem; border: none; border-radius: 0.25rem';
+    
+    const cardName = document.createElement('input');
+    cardName.setAttribute('type', 'text');
+    cardName.setAttribute('placeholder', 'Name on Card');
+    cardName.setAttribute('required', '');
+    cardName.setAttribute('pattern', '^[a-zA-Z ]+$');
+    cardName.style.cssText = 'width: 100%; padding: 0.25rem; border: none; border-radius: 0.25rem';
+    
+    const cardExpiration = document.createElement('input');
+    cardExpiration.setAttribute('placeholder', 'MM/YY');
+    cardExpiration.setAttribute('required', '');
+    cardExpiration.setAttribute('pattern', '^(0[1-9]|1[0-2])/[0-9]{2}$');
+    cardExpiration.style.cssText = 'width: 68%; padding: 0.25rem; border: none; border-radius: 0.25rem';
+    
+    const cardCVV = document.createElement('input');
+    cardCVV.setAttribute('type', 'text');
+    cardCVV.setAttribute('placeholder', 'CVV');
+    cardCVV.setAttribute('required', '');
+    cardCVV.setAttribute('pattern', '^[0-9]{3,4}$');
+    cardCVV.setAttribute('id', 'cardcvv');
+    cardCVV.style.cssText = 'width: 20%; padding: 0.25rem; border: none; border-radius: 0.25rem';
+    
+    const submitButton = document.createElement('input');
+    submitButton.setAttribute('type', 'submit');
+    submitButton.setAttribute('value', 'Pay');
+    submitButton.style.cssText = 'width: 100%; padding: 0.5rem; margin: 1rem 0; border: none; border-radius: 0.25rem; background: #3333FF; color: white; font: bold 1rem Arial;';
+
+    const errorSpan = document.createElement('span');
+    errorSpan.setAttribute('aria-live', 'polite');
+    errorSpan.classList.add('errorspan');                      
+
+    creditCardDiv.appendChild(cardNumber);
+    creditCardDiv.appendChild(cardName);
+    creditCardDiv.appendChild(cardExpiration);
+    creditCardDiv.appendChild(cardCVV);
+    creditCardDiv.appendChild(submitButton);
+    creditCardDiv.appendChild(errorSpan);
+    checkout.appendChild(creditCardDiv);
+
+    // inorder to make the credicard number entry presentable with XXXX-XXXX-XXXX-XXXX formatt
+    cardNumber.addEventListener('input', (event) => {
+        event.target.value = event.target.value.replace(/-/g, '').replace(/(\d{4}(?!$))/g, '$1-').slice(0, 19);
+})
+
+   
+
+    creditCardDiv.addEventListener('submit', (event) => {
+
+        event.preventDefault();
+
+    // Clearing the previous custom validity
+    cardNumber.setCustomValidity('');
+    cardName.setCustomValidity('');
+    cardExpiration.setCustomValidity('');
+    cardCVV.setCustomValidity('');
+
+    
+    if(!cardNumber.checkValidity()) {
+        if (cardNumber.validity.patternMismatch) {
+            cardNumber.setCustomValidity('Please enter a valid Credit Card number.');
+        }
+    }
+
+    if(!cardName.checkValidity()) {
+        if (cardName.validity.patternMismatch) {
+            cardName.setCustomValidity('Please enter a valid name.');
+        }
+    }
+
+    if(!cardExpiration.checkValidity()) {
+        if (cardExpiration.validity.patternMismatch) {
+            cardExpiration.setCustomValidity('Please enter valid expiration data in MM/YY format.');
+        }
+    }
+
+    if(!cardCVV.checkValidity()) {
+        if (cardCVV.validity.patternMismatch) {
+            cardCVV.setCustomValidity('Please enter a valid CVV number.');
+        }
+    }
+
+    if(creditCardDiv.checkValidity()) {
+        errorSpan.textContent = `Thank you. Processed ${cartTotal()} on your card ending in ${cardNumber.value.slice(-4)}.`;
+        console.log('Valid form: if we had backend, we would send submit to the backend.');
+    } else {
+        cardNumber.reportValidity();
+        cardName.reportValidity();
+        cardExpiration.reportValidity();
+        cardCVV.reportValidity();
+    }
+        
+    });
+
+}
+
+drawCrediCardForm();
+
+
+/**
+ * Add product
+ */
+function drawAddProductForm() {
+    const productContainer = document.querySelector('.products-container');
+    productContainer.style.background = 'red';
+    const addProductForm = document.createElement('form');
+    addProductForm.setAttribute('novalidate', '');
+    addProductForm.style.cssText = 'max-width: 250px; display: flex; flex-flow: row wrap; gap: 0.5rem; padding: 1rem; background: #DDD; border-radius: 0.5rem; box-shadow: 3px 3px 4px 1px';
+    
+
+    const formTitle = document.createElement('h3');
+    formTitle.textContent = 'Add a product of your own';
+
+    const productName = document.createElement('input');
+    productName.setAttribute('type', 'text');
+    productName.setAttribute('placeholder', 'Name of product');
+    productName.setAttribute('required', '');
+    productName.setAttribute('pattern', '^[a-zA-Z ]+$');
+    productName.style.cssText = 'width: 100%; padding: 0.25rem; border: none; border-radius: 0.25rem';
+
+    const productPrice = document.createElement('input');
+    productPrice.setAttribute('type', 'text');
+    productPrice.setAttribute('placeholder', 'Price');
+    productPrice.setAttribute('required', '');
+    productPrice.setAttribute('pattern', '^[0-9]*$');
+    productPrice.style.cssText = 'width: 100%; padding: 0.25rem; border: none; border-radius: 0.25rem';
+    // const productQuantity = document.createElement('input');
+    // const productID = document.createElement('input');
+    const productImgUrl = document.createElement('input');
+    productImgUrl.setAttribute('type', 'text');
+    productImgUrl.setAttribute('placeholder', 'Product image Url/file path');
+    productImgUrl.setAttribute('required', '');
+    //productImgUrl.setAttribute('pattern', 'https://.*$'); //also want to grab local image files
+    productImgUrl.style.cssText = 'width: 100%; padding: 0.25rem; border: none; border-radius: 0.25rem';
+
+    const submitButton = document.createElement('input');
+    submitButton.setAttribute('type', 'submit');
+    submitButton.setAttribute('value', 'Add Product');
+    submitButton.style.cssText = 'width: 100%; padding: 0.5rem; margin: 1rem 0; border: none; border-radius: 0.25rem; background: #3333FF; color: white; font: bold 1rem Arial;';
+
+
+    addProductForm.appendChild(formTitle);
+    addProductForm.appendChild(productName);
+    addProductForm.appendChild(productPrice);
+    addProductForm.appendChild(productImgUrl);
+    addProductForm.appendChild(submitButton);
+    productContainer.appendChild(addProductForm);
+
+    addProductForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        if(addProductForm.checkValidity()) {
+
+            const productIds = products.map((product) => product.productId);
+
+            const userProduct = {
+                name: productName.value,
+                price: productPrice.value,
+                quantity: 0,
+                productId: Math.max(...productIds) + 1, //generate unique id
+                image: productImgUrl.value,
+              };
+
+
+            products.push(userProduct);
+            drawProducts();
+            addProductForm.reset();
+            
+
+        } else {
+        event.preventDefault();
+        productName.setCustomValidity('');
+        productPrice.setCustomValidity('');
+        productImgUrl.setCustomValidity('');
+      
+
+        if ( productName.validity.patternMismatch) {
+            productName.setCustomValidity('Pleade enter valid product name');
+        }
+
+        if ( productPrice.validity.patternMismatch) {
+            productPrice.setCustomValidity('Pleade enter valid price');
+        }
+
+        if ( productImgUrl.validity.patternMismatch) {
+            productImgUrl.setCustomValidity('Pleade enter valid url for image');
+        }
+
+        productName.reportValidity();
+        productPrice.reportValidity();
+        productImgUrl.reportValidity();
+    }
+})
+}
+drawAddProductForm();
