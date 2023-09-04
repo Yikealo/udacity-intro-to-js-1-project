@@ -204,7 +204,7 @@ function drawCrediCardForm() {
     cardNumber.setAttribute('type', 'text');
     cardNumber.setAttribute('placeholder', 'Card Number');
     cardNumber.setAttribute('required', '');
-    cardNumber.setAttribute('pattern', '^(\d{4}-){3}\d{4}$'); //eslint-disable-line
+    cardNumber.setAttribute('pattern', '^(\\d{4}-){3}\\d{4}$'); //eslint-disable-line
     cardNumber.style.cssText = 'width: 100%; padding: 0.25rem; border: none; border-radius: 0.25rem';
     
     const cardName = document.createElement('input');
@@ -249,6 +249,9 @@ function drawCrediCardForm() {
     cardNumber.addEventListener('input', (event) => {
         event.target.value = event.target.value.replace(/-/g, '').replace(/(\d{4}(?!$))/g, '$1-').slice(0, 19);
 })
+    cardExpiration.addEventListener('input', (event) => {
+        event.target.value = event.target.value.replace(/\//g, '').replace(/(\d{2}(?!$))/g, '$1/').slice(0,5);
+    })
 
    
 
@@ -288,7 +291,7 @@ function drawCrediCardForm() {
     }
 
     if(creditCardDiv.checkValidity()) {
-        errorSpan.textContent = `Thank you. Processed ${cartTotal()} on your card ending in ${cardNumber.value.slice(-4)}.`;
+        errorSpan.textContent = `Thank you. Processed ${formatCurrency(cartTotal())} on your card ending in ${cardNumber.value.slice(-4)}.`;
         console.log('Valid form: if we had backend, we would send submit to the backend.');
     } else {
         cardNumber.reportValidity();
@@ -309,7 +312,7 @@ drawCrediCardForm();
  */
 function drawAddProductForm() {
     const productContainer = document.querySelector('.products-container');
-    productContainer.style.background = 'red';
+    
     const addProductForm = document.createElement('form');
     addProductForm.setAttribute('novalidate', '');
     addProductForm.style.cssText = 'max-width: 250px; display: flex; flex-flow: row wrap; gap: 0.5rem; padding: 1rem; background: #DDD; border-radius: 0.5rem; box-shadow: 3px 3px 4px 1px';
